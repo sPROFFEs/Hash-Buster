@@ -153,16 +153,28 @@ def zeta(hashvalue, hashtype):
         pass
     return False
 
-print (f'''\033[1;97m_  _ ____ ____ _  _    ___  _  _ ____ ___ ____ ____
+def iota(hashvalue, hashtype):
+    """HashToolkit - Free database"""
+    try:
+        response = requests.get(f'https://hashtoolkit.com/reverse-hash/?hash={hashvalue}', timeout=10, verify=False)
+        if response.status_code == 200:
+            match = re.search(r'title="decrypted hash">(.*?)</span>', response.text)
+            if match:
+                return match.group(1)
+    except:
+        pass
+    return False
+
+print (f'''\\033[1;97m_  _ ____ ____ _  _    ___  _  _ ____ ___ ____ ____
 |__| |__| [__  |__|    |__] |  | [__   |  |___ |__/
-|  | |  | ___] |  |    |__] |__| ___]  |  |___ |  \\  {red}v4.0\033[0m\n''' )
+|  | |  | ___] |  |    |__] |__| ___]  |  |___ |  \\  {red}v4.0\\033[0m\\n''' )
 
 #md5 = [gamma, alpha, beta, theta, delta]
-md5 = [alpha, beta, gamma, theta, delta, epsilon, zeta]
-sha1 = [alpha, beta, theta, delta, epsilon, zeta]
-sha256 = [alpha, beta, theta, delta, epsilon, zeta]
-sha384 = [alpha, beta, theta, delta, epsilon, zeta]
-sha512 = [alpha, beta, theta, delta, epsilon, zeta]
+md5 = [alpha, beta, gamma, theta, delta, epsilon, zeta, iota]
+sha1 = [alpha, beta, theta, delta, epsilon, zeta, iota]
+sha256 = [alpha, beta, theta, delta, epsilon, zeta, iota]
+sha384 = [alpha, beta, theta, delta, epsilon, zeta, iota]
+sha512 = [alpha, beta, theta, delta, epsilon, zeta, iota]
 
 def crack(hashvalue):
     result = False
@@ -172,55 +184,60 @@ def crack(hashvalue):
         for api in md5:
             try:
                 r = api(hashvalue, 'md5')
-                if r:
-                    return r
-            except Exception as e:
-                # API failed (SSL, network, etc.), try next one
-                continue
+                if r: return r
+            except Exception: continue
+            
+        # Try NTLM if MD5 failed
+        if not file:
+            print ('%s Hash function : NTLM' % info)
+        for api in md5:
+            try:
+                r = api(hashvalue, 'ntlm')
+                if r: return r
+            except Exception: continue
+            
     elif len(hashvalue) == 40:
         if not file:
             print ('%s Hash function : SHA1' % info)
         for api in sha1:
             try:
                 r = api(hashvalue, 'sha1')
-                if r:
-                    return r
-            except Exception as e:
-                # API failed (SSL, network, etc.), try next one
-                continue
+                if r: return r
+            except Exception: continue
+            
+        # Try MySQL if SHA1 failed
+        if not file:
+            print ('%s Hash function : MySQL' % info)
+        for api in sha1:
+            try:
+                r = api(hashvalue, 'mysql')
+                if r: return r
+            except Exception: continue
+            
     elif len(hashvalue) == 64:
         if not file:
             print ('%s Hash function : SHA-256' % info)
         for api in sha256:
             try:
                 r = api(hashvalue, 'sha256')
-                if r:
-                    return r
-            except Exception as e:
-                # API failed (SSL, network, etc.), try next one
-                continue
+                if r: return r
+            except Exception: continue
     elif len(hashvalue) == 96:
         if not file:
             print ('%s Hash function : SHA-384' % info)
         for api in sha384:
             try:
                 r = api(hashvalue, 'sha384')
-                if r:
-                    return r
-            except Exception as e:
-                # API failed (SSL, network, etc.), try next one
-                continue
+                if r: return r
+            except Exception: continue
     elif len(hashvalue) == 128:
         if not file:
             print ('%s Hash function : SHA-512' % info)
         for api in sha512:
             try:
                 r = api(hashvalue, 'sha512')
-                if r:
-                    return r
-            except Exception as e:
-                # API failed (SSL, network, etc.), try next one
-                continue
+                if r: return r
+            except Exception: continue
     else:
         if not file:
             print ('%s This hash type is not supported.' % bad)
