@@ -111,16 +111,58 @@ def theta(hashvalue, hashtype):
     else:
         return False
 
+def delta(hashvalue, hashtype):
+    """LeakLookup - Free hash database"""
+    try:
+        response = requests.get(f'https://leaklookup.com/api/search/{hashvalue}', timeout=10, verify=False)
+        if response.status_code == 200:
+            data = response.text.strip()
+            if data and data != hashvalue and 'not found' not in data.lower():
+                return data
+    except:
+        pass
+    return False
+
+def epsilon(hashvalue, hashtype):
+    """OnlineHashCrack - Free community database"""
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(f'https://www.onlinehashcrack.com/hash-identification.php?hash={hashvalue}', 
+                              headers=headers, timeout=10, verify=False)
+        if response.status_code == 200 and hashvalue not in response.text:
+            # Parse response for cracked value
+            import re
+            match = re.search(r'Plaintext:\s*([^\s<]+)', response.text)
+            if match:
+                return match.group(1)
+    except:
+        pass
+    return False
+
+def zeta(hashvalue, hashtype):
+    """MD5Online - Another free database"""
+    try:
+        response = requests.post('https://md5.gromweb.com/query', 
+                               data={'hash': hashvalue, 'string': ''}, 
+                               timeout=10, verify=False)
+        if response.status_code == 200:
+            text = response.text.strip()
+            if text and text != hashvalue and len(text) < 100:
+                return text
+    except:
+        pass
+    return False
+
 print (f'''\033[1;97m_  _ ____ ____ _  _    ___  _  _ ____ ___ ____ ____
 |__| |__| [__  |__|    |__] |  | [__   |  |___ |__/
 |  | |  | ___] |  |    |__] |__| ___]  |  |___ |  \\  {red}v4.0\033[0m\n''' )
 
 #md5 = [gamma, alpha, beta, theta, delta]
-md5 = [alpha,beta,gamma,theta]
-sha1 =[alpha,beta,theta]
-sha256 = [alpha, beta, theta]
-sha384 = [alpha, beta, theta]
-sha512 = [alpha, beta, theta]
+md5 = [alpha, beta, gamma, theta, delta, epsilon, zeta]
+sha1 = [alpha, beta, theta, delta, epsilon, zeta]
+sha256 = [alpha, beta, theta, delta, epsilon, zeta]
+sha384 = [alpha, beta, theta, delta, epsilon, zeta]
+sha512 = [alpha, beta, theta, delta, epsilon, zeta]
 
 def crack(hashvalue):
     result = False
