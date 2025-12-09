@@ -128,37 +128,57 @@ def crack(hashvalue):
         if not file:
             print ('%s Hash function : MD5' % info)
         for api in md5:
-            r = api(hashvalue, 'md5')
-            if r:
-                return r
+            try:
+                r = api(hashvalue, 'md5')
+                if r:
+                    return r
+            except Exception as e:
+                # API failed (SSL, network, etc.), try next one
+                continue
     elif len(hashvalue) == 40:
         if not file:
             print ('%s Hash function : SHA1' % info)
         for api in sha1:
-            r = api(hashvalue, 'sha1')
-            if r:
-                return r
+            try:
+                r = api(hashvalue, 'sha1')
+                if r:
+                    return r
+            except Exception as e:
+                # API failed (SSL, network, etc.), try next one
+                continue
     elif len(hashvalue) == 64:
         if not file:
             print ('%s Hash function : SHA-256' % info)
         for api in sha256:
-            r = api(hashvalue, 'sha256')
-            if r:
-                return r
+            try:
+                r = api(hashvalue, 'sha256')
+                if r:
+                    return r
+            except Exception as e:
+                # API failed (SSL, network, etc.), try next one
+                continue
     elif len(hashvalue) == 96:
         if not file:
             print ('%s Hash function : SHA-384' % info)
         for api in sha384:
-            r = api(hashvalue, 'sha384')
-            if r:
-                return r
+            try:
+                r = api(hashvalue, 'sha384')
+                if r:
+                    return r
+            except Exception as e:
+                # API failed (SSL, network, etc.), try next one
+                continue
     elif len(hashvalue) == 128:
         if not file:
             print ('%s Hash function : SHA-512' % info)
         for api in sha512:
-            r = api(hashvalue, 'sha512')
-            if r:
-                return r
+            try:
+                r = api(hashvalue, 'sha512')
+                if r:
+                    return r
+            except Exception as e:
+                # API failed (SSL, network, etc.), try next one
+                continue
     else:
         if not file:
             print ('%s This hash type is not supported.' % bad)
